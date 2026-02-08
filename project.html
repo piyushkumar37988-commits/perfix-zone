@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Perfix Zone</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #000;
+      color: #fff;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    header {
+      width: 100%;
+      padding: 15px;
+      text-align: center;
+      font-size: 28px;
+      font-weight: bold;
+      background: #111;
+      border-bottom: 1px solid #222;
+    }
+
+    .container {
+      flex: 1;
+      width: 100%;
+      max-width: 900px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    video {
+      width: 100%;
+      max-width: 600px;
+      height: 350px;
+      background: #111;
+      border: 2px solid #222;
+      border-radius: 10px;
+      object-fit: cover;
+    }
+
+    .status {
+      font-size: 16px;
+      color: #aaa;
+    }
+
+    .controls {
+      display: flex;
+      gap: 15px;
+    }
+
+    button {
+      padding: 12px 25px;
+      font-size: 16px;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .find {
+      background: #1e88e5;
+      color: #fff;
+    }
+
+    .find:hover {
+      background: #1565c0;
+    }
+
+    .end {
+      background: #e53935;
+      color: #fff;
+    }
+
+    .end:hover {
+      background: #c62828;
+    }
+
+    footer {
+      padding: 10px;
+      font-size: 12px;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+
+  <header>Perfix Zone</header>
+
+  <div class="container">
+    <video id="localVideo" autoplay muted></video>
+
+    <div class="status" id="status">
+      Click "Find Stranger" to start
+    </div>
+
+    <div class="controls">
+      <button class="find" onclick="startChat()">Find Stranger</button>
+      <button class="end" onclick="endChat()">End Chat</button>
+    </div>
+  </div>
+
+  <footer>Perfix Zone © 2026</footer>
+
+  <script>
+    let localStream = null;
+    let isActive = false;
+
+    async function startChat() {
+      if (isActive) return;
+
+      try {
+        document.getElementById("status").innerText = "Connecting camera...";
+
+        localStream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+          audio: true
+        });
+
+        document.getElementById("localVideo").srcObject = localStream;
+        document.getElementById("status").innerText =
+          "Camera connected. Waiting for stranger...";
+        isActive = true;
+
+        // 🔒 Backend matching & socket logic will go here later
+        // socket.emit("find");
+
+      } catch (err) {
+        alert("Camera access denied");
+        document.getElementById("status").innerText =
+          "Camera permission required";
+      }
+    }
+
+    function endChat() {
+      if (localStream) {
+        localStream.getTracks().forEach(track => track.stop());
+        localStream = null;
+      }
+
+      document.getElementById("localVideo").srcObject = null;
+      document.getElementById("status").innerText =
+        "Chat ended. Click Find Stranger to start again.";
+      isActive = false;
+
+      // 🔒 socket.disconnect() will go here later
+    }
+  </script>
+
+</body>
+</html>
